@@ -1,3 +1,32 @@
+/*
+Names:  Johan Ebent and Evan Whitmer
+Class:  CSC-344-A   Algorithms and Complexity
+Date:   October 19, 2024
+
+Description:
+Write a program in C++ that implements a binary search tree, where at each node
+there is an object representing an employee’s information within a company (i.e. an
+object whose member variables are their first and last name, their job title, and their
+salary). The tree should be organized based on the employees’ salary.
+
+Your program should have the following features:
+
+1.
+A menu asking user whether they want to add an employee, delete an
+employee, quit the program, or search the “database” for employees who
+fall between a minimum and maximum salary range.
+
+2.
+An implementation for each of these menu options (I’ll let details up to you).
+After the program executes each option (sans “quit”) the program should return
+the user to the main menu.
+
+3.
+A driver that demonstrates that each function works correctly.
+Be sure to add at least 10000 random “employees” to the tree in your
+driver using your “add" function, where salary ranges are from 30000 and 200000.
+Then, print the menu for users to choose from.
+*/
 #include <iostream>
 #include <string>
 #include <vector>
