@@ -1,5 +1,5 @@
 /*
-Names:  Johan Ebent and Evan Whitmer
+Names:  Jonah Ebent and Evan Whitmer
 Class:  CSC-344-A   Algorithms and Complexity
 Date:   October 19, 2024
 
