@@ -42,9 +42,11 @@ public:
         lastName(lastName),
         jobTitle(jobTitle) {}
 
-    // tree relations
+    // The node's parent
     Employee* p = nullptr;
+    // The node's left child
     Employee* left = nullptr;
+    // The node's right child
     Employee* right = nullptr;
 
     // tree priority (doubling as satellite data)
@@ -105,16 +107,19 @@ private:
     }
 
 public:
+    EmployeeBST() {}
+
+    // The root of the tree, initialized to NIL
     Employee* root = nullptr;
 
-    void insert(Employee* employee) {
+    void insert(Employee employee) {
         // start at the root
         Employee* current = root;
         Employee* parent = nullptr;
         // traverse down the tree
         while (current != nullptr) {
             parent = current;
-            if (employee->salary < current->salary) {
+            if (employee.salary < current->salary) {
                 current = current->left;
             }
             else {
@@ -122,10 +127,10 @@ public:
             }
         }
         // establish tree relationships
-        employee->p = current;
-        if (parent == nullptr) root = employee;
-        else if (employee->salary < parent->salary) parent->left = employee;
-        else parent->right = employee;
+        employee.p = parent;
+        if (parent == nullptr) root = &employee;
+        else if (employee.salary < parent->salary) parent->left = &employee;
+        else parent->right = &employee;
     }
 
     void remove(Employee* z) {
@@ -186,7 +191,7 @@ since they are logically associated, this groups them under
 the same namespace. */
 class UI {
 private:
-    EmployeeBST* employees;
+    EmployeeBST* employees = nullptr;
 
     bool isBetween(int num, int* min, int* max) {
         if (min != nullptr && num < *min) return false;
@@ -265,7 +270,7 @@ public:
 
     void addEmployee() {
         Employee e = inputEmployee();
-        employees->insert(&e);
+        employees->insert(e);
         cout << "Successfully inserted " << e.firstName << " " << e.lastName << " into the database" << endl;
     }
 
@@ -309,7 +314,8 @@ public:
 /* Inserts 10,000 employees into the BST, with random data
 and salaries ranging from 30,000 to 200,000.*/
 void initializeDummyData(EmployeeBST* bst) {
-
+    //Employee e = Employee(30000, "Jonah", "Ebent", "Code Monkey");
+    //bst->insert(e);
 }
 
 int main()
