@@ -26,66 +26,70 @@ A driver that demonstrates that each function works correctly.
 Be sure to add at least 10000 random “employees” to the tree in your
 driver using your “add" function, where salary ranges are from 30000 and 200000.
 Then, print the menu for users to choose from.
+
+The implementation of the BST is a modification of the code found here:
+https://gist.github.com/harish-r/a7df7ce576dda35c9660
 */
 #include <iostream>
 #include <functional>
+#include <random>
 #include <string>
 #include <vector>
 
 using namespace std;
 
-struct Emp {
-    Emp() {};
-    Emp(string firstName, string lastName, string jobTitle, int salary) :
+struct Employee {
+    Employee() {};
+    Employee(string firstName, string lastName, string jobTitle, int salary) :
         firstName(firstName),
         lastName(lastName),
         jobTitle(jobTitle),
         salary(salary) {}
 
-    int salary;
-    string firstName;
-    string lastName;
-    string jobTitle;
+    int salary{};
+    string firstName{};
+    string lastName{};
+    string jobTitle{};
 
-    bool operator<(const Emp& other) const {
+    bool operator<(const Employee& other) const {
         return salary < other.salary;
     }
 
-    bool operator<=(const Emp& other) const {
+    bool operator<=(const Employee& other) const {
         return salary <= other.salary;
     }
 
-    bool operator>(const Emp& other) const {
+    bool operator>(const Employee& other) const {
         return salary > other.salary;
     }
 
-    bool operator>=(const Emp& other) const {
+    bool operator>=(const Employee& other) const {
         return salary >= other.salary;
     }
     
-    bool operator==(const Emp& other) const {
+    bool operator==(const Employee& other) const {
         return salary == other.salary
             && firstName == other.firstName
             && lastName == other.lastName
             && jobTitle == other.jobTitle;
     }
 
-    bool operator!=(const Emp& other) const {
+    bool operator!=(const Employee& other) const {
         return !(*this == other);
     }
 
-    friend ostream& operator<<(ostream& os, const Emp& obj) {
+    friend ostream& operator<<(ostream& os, const Employee& obj) {
         os << obj.firstName << " " << obj.lastName << ", " << obj.jobTitle << " ($" << obj.salary << ")";
         return os;
     }
 };
 
-class BST {
+class EmployeeBST {
 
     struct node {
-        node(Emp data) : data(data), left(nullptr), right(nullptr) {}
+        node(Employee data) : data(data), left(nullptr), right(nullptr) {}
 
-        Emp data;
+        Employee data;
         node* left;
         node* right;
     };
@@ -103,11 +107,9 @@ class BST {
         return nullptr;
     }
 
-    node* insert(Emp x, node* t) {
+    node* insert(Employee x, node* t) {
         if (t == nullptr) {
             t = new node(x);
-            // t->data = x;
-            // t->left = t->right = nullptr;
         }
         else if (x < t->data) {
             t->left = insert(x, t->left);
@@ -130,7 +132,7 @@ class BST {
         else return findMax(t->right);
     }
 
-    node* remove(Emp x, node* t) {
+    node* remove(Employee x, node* t) {
         node* temp;
         if (t == nullptr) return nullptr;
         else if (x != t->data) { // traverse down the tree
@@ -170,9 +172,9 @@ class BST {
     }
 
     void inorderConditional(node* t, function<bool(node *)> condition) {
-        if (t == nullptr || !condition(t)) return;
+        if (t == nullptr) return;
         inorderConditional(t->left, condition);
-        cout << t->data << endl;
+        if (condition(t)) cout << t->data << endl;
         inorderConditional(t->right, condition);
     }
 
@@ -184,19 +186,19 @@ class BST {
     }
 
 public:
-    BST() {
+    EmployeeBST() {
         root = nullptr;
     }
 
-    ~BST() {
+    ~EmployeeBST() {
         root = makeEmpty(root);
     }
 
-    void insert(Emp x) {
+    void insert(Employee x) {
         root = insert(x, root);
     }
 
-    void remove(Emp x) {
+    void remove(Employee x) {
         remove(x, root);
     }
 
@@ -205,14 +207,14 @@ public:
         cout << endl;
     }
 
-    Emp* search(int x) {
+    Employee* search(int x) {
         node* result = find(root, x);
         if (result == nullptr) return nullptr;
         return &result->data;
     }
 
-    vector<Emp> findAll(int x) {
-        vector<Emp> out;
+    vector<Employee> findAll(int x) {
+        vector<Employee> out;
         node* y = find(root, x);
         if (y == nullptr) return out;
         out.push_back(y->data);
@@ -237,7 +239,7 @@ since they are logically associated, this groups them under
 the same namespace. */
 class UI {
 private:
-    BST* employees = nullptr;
+    EmployeeBST* employees = nullptr;
 
     bool isBetween(int num, int* min, int* max) {
         if (min != nullptr && num < *min) return false;
@@ -248,14 +250,13 @@ private:
     int inputInteger(int* min, int* max) {
         int intput;
         string input;
-        cout << "--------------------------" << endl;
         do {
-            cout << "Input: ";      // prompt user for input
+            cout << "  Input: ";      // prompt user for input
             getline(cin, input);
 
             try { intput = stoi(input); }
             catch (const std::invalid_argument&) {
-                cout << "  Invalid input. Please enter a number between " << *min << " and " << *max << "(inclusive)." << endl;
+                cout << "  Invalid input. Please enter a number between " << *min << " and " << *max << " (inclusive)." << endl;
                 continue;
             }
 
@@ -267,7 +268,7 @@ private:
         return intput;
     }
 
-    Emp inputEmployee() {
+    Employee inputEmployee() {
         int salary;
         string firstName, lastName, jobTitle;
         cout << "Enter a first name: " << endl;
@@ -280,19 +281,20 @@ private:
         int min = 30000;
         int max = 200000;
         salary = inputInteger(&min, &max);
-        return Emp(firstName, lastName, jobTitle, salary);
+        return Employee(firstName, lastName, jobTitle, salary);
     }
 
 public:
-    UI(BST* bst): employees(bst) {}
+    UI(EmployeeBST* bst): employees(bst) {}
 
     void mainMenu() {
-        cout << "Welcome to the employee \"database\"" << endl;
+        cout << "----------------------------------" << endl;
         cout << "What would you like to do?" << endl;
         cout << "  1) Add an employee" << endl;
         cout << "  2) Delete an employee" << endl;
         cout << "  3) Search for employees" << endl;
         cout << "  4) Quit" << endl;
+        cout << "----------------------------------" << endl;
         int min = 1;
         int max = 4;
         switch (inputInteger(&min, &max))
@@ -315,7 +317,7 @@ public:
     }
 
     void addEmployee() {
-        Emp e = inputEmployee();
+        Employee e = inputEmployee();
         employees->insert(e);
         cout << "Successfully inserted " << e.firstName << " " << e.lastName << " into the database" << endl;
     }
@@ -325,8 +327,8 @@ public:
         int max = 200000;
         cout << "Select a salary to search for." << endl;
         int salary = inputInteger(&min, &max);
-        vector<Emp> v = employees->findAll(salary);
-        Emp z;
+        vector<Employee> v = employees->findAll(salary);
+        Employee z;
         int n = v.size();
         if (n == 0) {
             cout << "No employees found with the given salary." << endl;
@@ -339,7 +341,7 @@ public:
             // Display employees
             cout << "Found " << n << " employees with salary $" << salary << ". Which would you like to delete?" << endl;
             for (int i = 0; i < n; i++) {
-                cout << "  " << i+1 << ") " << v.at(i);
+                cout << "  " << i + 1 << ") " << v.at(i) << endl;
             }
             // Get user input
             min = 1;
@@ -368,36 +370,52 @@ public:
     }
 };
 
-/* Inserts 10,000 employees into the BST, with random data
-and salaries ranging from 30,000 to 200,000.*/
-void initializeDummyData(BST* bst) {
-    //Employee e = Employee(30000, "Jonah", "Ebent", "Code Monkey");
-    //bst->insert(e);
+static string randStr(int length) {
+    // Define the list of possible characters
+    const string CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    // Create a random number generator
+    random_device rd;
+    mt19937 generator(rd());
+
+    // Create a distribution to uniformly select from all
+    // characters
+    uniform_int_distribution<> distribution(0, CHARACTERS.size() - 1);
+
+    // Generate the random string
+    string random_string;
+    for (int i = 0; i < length; ++i) {
+        random_string += CHARACTERS[distribution(generator)];
+    }
+
+    return random_string;
 }
 
-int main()
-{
-    BST bst;
+static int randInt(int min, int max) {
+    return min + (rand() % (max - min + 1));
+}
+
+/* Inserts 10,000 employees into the BST, with random data
+and salaries ranging from 30,000 to 200,000.*/
+static void initializeDummyData(EmployeeBST& bst) {
+    const string CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    srand((unsigned int)time(NULL));
+    random_device rd;
+    mt19937 gen(rd());
+
+    uniform_int_distribution<int> salaryDist(30'000, 200'000);
+
+    for (int i = 0; i < 10000; i++) {
+        Employee e(randStr(8), randStr(8), randStr(8), salaryDist(gen));
+        bst.insert(e);
+    }
+}
+
+int main() {
+    EmployeeBST bst;
     UI ui = UI(&bst);
-    initializeDummyData(&bst);
+    initializeDummyData(bst);
+    cout << "Welcome to the employee \"Database\"" << endl;
     while (true) ui.mainMenu();
-    //Employee* jonah = new Employee(100000, "J", "A", "E");
-    //bst.insert(Employee(100000, "J", "A", "E"));
-    //bst.printInOrder(bst.root);
-    //BST t;
-    //t.insert(Emp("A", "A", "A", 100000));
-    //t.insert(Emp("B", "B", "B", 150000));
-    //t.insert(Emp("C", "C", "C", 75000));
-    //t.insert(Emp("D", "D", "D", 50000));
-    //t.insert(Emp("E", "E", "E", 200000));
-    //t.insert(Emp("F", "F", "F", 200000));
-    //t.insert(Emp("G", "G", "G", 200000));
-    //t.insert(Emp("H", "H", "H", 200000));
-    //t.display();
-    //Emp a = *t.search(100000);
-    //t.remove(a);
-    //t.display();
-    //vector<Emp> v = t.findAll(200000);
-    //for (Emp e : v) cout << e << endl;
-    //return 0;
+    return 0;
 }
