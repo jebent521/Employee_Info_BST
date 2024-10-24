@@ -34,7 +34,7 @@ RB Tree Properties
 - Black Property: Every path from a node to its descendant null nodes (leaves) has the same number of black nodes.
 - Leaf Property: All leaves (NIL nodes) are black.
 
-Much of the implementation was taken from https://www.geeksforgeeks.org/introduction-to-red-black-tree/
+Much of the implementation was taken from https://www.programiz.com/dsa/red-black-tree
 */
 #include <iostream>
 #include <functional>
