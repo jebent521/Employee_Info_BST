@@ -414,6 +414,22 @@ static void initializeDummyData(EmployeeBST& bst) {
 int main() {
     EmployeeBST bst;
     UI ui = UI(&bst);
+    cout << "~~~ Inserting Evan, Thor, and Jonah ~~~" << endl;
+    bst.insert(Employee("evan", "whitmer", "frontend developer", 199999));
+    bst.insert(Employee("jonah", "ebent", "retired", 200000));
+    bst.insert(Employee("thor", "pilegaard", "code monkey", 199998));
+    bst.display();
+    cout << endl;
+    cout << "~~~ Displaying all employees with salary in range [199999, 200000] ~~~" << endl;
+    bst.printInRange(199999, 200000);
+    cout << endl;
+    cout << "~~~ Searching for the first employee with salary $199999 ~~~" << endl;
+    cout << *bst.search(199999) << endl;
+    cout << endl;
+    cout << "~~~ Removing jonah ~~~" << endl;
+    bst.remove(Employee("jonah", "ebent", "retired", 200000));
+    bst.display();
+    cout << endl;
     initializeDummyData(bst);
     cout << "Welcome to the employee \"Database\"" << endl;
     while (true) ui.mainMenu();
